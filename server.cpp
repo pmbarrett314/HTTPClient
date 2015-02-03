@@ -9,7 +9,7 @@
 
 int main()
 {
-    printf("hello world");
+    printf("Started...\n");
     int sock, backlog = 10;
     sockaddr_in serveraddr;
     unsigned short port = 4349;
@@ -33,6 +33,7 @@ int main()
     }
     int newsd, addsize;
     sockaddr_in clientaddr;
+    printf("Listening...\n");
     do
     {
         if (-1 == (newsd = accept(sock, (sockaddr *) &clientaddr, &addsize)))
@@ -40,6 +41,8 @@ int main()
             close(sock);
             return 4;
         }
+        printf("Client connected...\n");
+
         char buffer[BUFFERSIZE];
         while (0 < recv(newsd, buffer, BUFFERSIZE, 0))
         {
