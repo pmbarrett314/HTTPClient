@@ -31,7 +31,8 @@ int main()
         close(sock);
         return 3;
     }
-    int newsd, addsize;
+    int newsd;
+    socklen_t addsize;
     sockaddr_in clientaddr;
     printf("Listening...\n");
     do
