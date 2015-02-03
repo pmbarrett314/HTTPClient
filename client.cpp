@@ -1,8 +1,13 @@
+#include <sys/socket.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+
+
 int main()
 {
     int sock;
     unsigned short port = 4349;
-    char *serverIP = "127.0.0.0";
+    char const *serverIP = "127.0.0.0";
     sockaddr_in serveraddr;
 
     sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
