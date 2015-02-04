@@ -27,7 +27,7 @@ int main()
     }
 
     char buffer[BUFFERSIZE];
-    strcasecmp(buffer, "Hello server!");
+    strcasecmp(buffer, "Hello server!\n");
     send(sock, buffer, BUFFERSIZE, 0);
 
     close(sock);
