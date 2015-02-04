@@ -12,7 +12,7 @@ int main()
     char const *serverIP = "127.0.0.0";
     sockaddr_in serveraddr;
 
-    if(-1==(sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP))
+    if(-1==(sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)))
     {
         return 1;
     }
