@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
                 break;
         }
     }
-    if ((argc - optind < 1) || (((argc - optind < 0)) && isPort))
+    if ((argc - optind < 1) && !(((argc - optind < 0)) && isPort))
     {
         fprintf(stderr, "usage: %s serverport\n", argv[0]);
         exit(EXIT_FAILURE);
