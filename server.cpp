@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <sys/unistd.h>
 #include <stdlib.h>
-
+#include <signal.h>
 #define BUFFERSIZE 500
 
 int sock, clientsock;
