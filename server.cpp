@@ -24,7 +24,7 @@ void sig_handler(int sig)
 
 int main(int argc, char *argv[])
 {
-    unsigned short port;
+    unsigned int port;
     int c;
 
     extern char *optarg;
@@ -43,8 +43,8 @@ int main(int argc, char *argv[])
         }
     }
 
-    int argsleft = argc - optind
-    if ((argsleft < 1) && !(((argsleft < 0)) && isPort))
+    int argsleft = argc - optind;
+    if (argsleft == 0 && !isPort)
     {
         fprintf(stderr, "usage: %s serverport\n", argv[0]);
         exit(EXIT_FAILURE);
@@ -111,7 +111,5 @@ int main(int argc, char *argv[])
 
         close(clientsock);
     } while (18);
-    close(sock);
-    return 0;
 }
 

@@ -11,7 +11,7 @@
 int main(int argc, char *argv[])
 {
 
-    unsigned short port;
+    unsigned int port;
     char const *serverIP;
     int c;
     extern char *optarg;
@@ -36,7 +36,8 @@ int main(int argc, char *argv[])
                 break;
         }
     }
-    if ((argc - optind < 2) || (((argc - optind) < 1) && (isPort || isIP)) || (((argc - optind) < 0) && isPort && isIP))
+    int argsleft = argc - optind;
+    if ((argsleft == 0 && (!isPort || !isIP) || (argsleft == 1 && (!isPort && !isIP))))
     {
         fprintf(stderr, "usage: %s serverip serverport\n", argv[0]);
         exit(EXIT_FAILURE);
@@ -44,7 +45,7 @@ int main(int argc, char *argv[])
 
     for (int i = optind; i < argc; i++)
     {
-        switch (argc - optind)
+        switch (i)
         {
             case 1:
                 serverIP = argv[i];
