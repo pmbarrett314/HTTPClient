@@ -36,6 +36,7 @@ int main(int argc, char *argv[])
     if (argc - optind > 2)
     {
         fprintf(stderr, "usage: %s serverport", argv[0]);
+        exit(EXIT_FAILURE);
     }
 
     for (int i = optind; i < argc; i++)
