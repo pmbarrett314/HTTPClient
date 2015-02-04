@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     }
     if (argc - optind < 2)
     {
-        fprintf(stderr, "usage: %s serverip serverport", argv[0]);
+        fprintf(stderr, "usage: %s serverip serverport\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 

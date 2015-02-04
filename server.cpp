@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     }
     if (argc - optind < 1)
     {
-        fprintf(stderr, "usage: %s serverport", argv[0]);
+        fprintf(stderr, "usage: %s serverport\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
