@@ -4,13 +4,31 @@
 #include <string.h>
 #include <stdio.h>
 #include <sys/unistd.h>
+#include <stdlib.h>
 
 #define BUFFERSIZE 500
+
+int sock, clientsock;
+
+void sig_handler(int sig)
+{
+    if (sig == SIGINT)
+    {
+        printf("closing...\n")
+        close(sock);
+        close(clientsock);
+        exit(EXIT_SUCCESS);
+    }
+}
 
 int main()
 {
     printf("Started...\n");
-    int sock, backlog = 10;
+    if (signal(SIGINT, sig_handler) == SIG_ERR)
+    {
+        printf("Can't handle signal. \n");
+    }
+    int backlog = 10;
     sockaddr_in serveraddr;
     unsigned short port = 4349;
     if (-1 == (sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)))
@@ -31,13 +49,12 @@ int main()
         close(sock);
         return 3;
     }
-    int newsd;
     socklen_t addsize;
     sockaddr_in clientaddr;
     printf("Listening...\n");
     do
     {
-        if (-1 == (newsd = accept(sock, (sockaddr *) &clientaddr, &addsize)))
+        if (-1 == (clientsock = accept(sock, (sockaddr *) &clientaddr, &addsize)))
         {
             close(sock);
             return 4;
@@ -45,13 +62,14 @@ int main()
         printf("Client connected...\n");
 
         char buffer[BUFFERSIZE];
-        while (0 < recv(newsd, buffer, BUFFERSIZE, 0))
+        while (0 < recv(clientsock, buffer, BUFFERSIZE, 0))
         {
             printf(buffer);
         }
 
-        close(newsd);
+        close(clientsock);
     } while (18);
     close(sock);
     return 0;
 }
+
