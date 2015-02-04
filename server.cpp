@@ -42,7 +42,9 @@ int main(int argc, char *argv[])
                 break;
         }
     }
-    if ((argc - optind < 1) && !(((argc - optind < 0)) && isPort))
+
+    int argsleft = argc - optind
+    if ((argsleft < 1) && !(((argsleft < 0)) && isPort))
     {
         fprintf(stderr, "usage: %s serverport\n", argv[0]);
         exit(EXIT_FAILURE);
@@ -50,7 +52,7 @@ int main(int argc, char *argv[])
 
     for (int i = optind; i < argc; i++)
     {
-        switch (argc - optind)
+        switch (i)
         {
             case 1:
                 port = strtol(argv[i], NULL, 10);
