@@ -1,3 +1,4 @@
+#include <signal.h>
 #include <sys/socket.h>
 #include <netdb.h>
 #include <arpa/inet.h>
@@ -5,7 +6,7 @@
 #include <stdio.h>
 #include <sys/unistd.h>
 #include <stdlib.h>
-#include <signal.h>
+
 #define BUFFERSIZE 500
 
 int sock, clientsock;
