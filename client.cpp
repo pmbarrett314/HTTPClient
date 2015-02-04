@@ -5,7 +5,8 @@
 #include <string.h>
 
 #define BUFFERSIZE 500
-int main()
+
+int main(int argc, char *argv[])
 {
     int sock;
     unsigned short port = 4349;

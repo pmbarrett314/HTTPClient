@@ -22,7 +22,7 @@ void sig_handler(int sig)
     }
 }
 
-int main()
+int main(int argc, char *argv[])
 {
     printf("Started...\n");
     if (signal(SIGINT, sig_handler) == SIG_ERR)
@@ -42,6 +42,7 @@ int main()
     memset(&(serveraddr.sin_zero), 0, 8);
     if (-1 == bind(sock, (struct sockaddr *) &serveraddr, sizeof(serveraddr)))
     {
+        perror("error bind failed");
         return 2;
         close(sock);
     }
