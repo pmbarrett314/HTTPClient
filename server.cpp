@@ -24,17 +24,42 @@ void sig_handler(int sig)
 
 int main(int argc, char *argv[])
 {
+    unsigned short port = 4349;
+    char c;
+
+    extern char *optarg;
+    extern int optind;
+    //Argument processing
+    while (-1 != (c = getopt(argc, argv, "")))
+    {
+    }
+    if (argc - optind > 2)
+    {
+        fprintf(stderr, "usage: %s serverport", argv[0]);
+    }
+
+    for (int i = optind; i < argc; i++)
+    {
+        switch (argc - optind)
+        {
+            case 1:
+                port = atoi(argv[i]);
+                break;
+        }
+    }
+
     printf("Started...\n");
     if (signal(SIGINT, sig_handler) == SIG_ERR)
     {
-        printf("Can't handle signal. \n");
+        perror("error can't handle signal");
     }
     int backlog = 10;
     sockaddr_in serveraddr;
-    unsigned short port = 4349;
+
     if (-1 == (sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)))
     {
-        return 1;
+        perror("error socket not created");
+        exit(EXIT_FAILURE);
     }
     serveraddr.sin_family = AF_INET;
     serveraddr.sin_port = htons(port);
@@ -43,13 +68,15 @@ int main(int argc, char *argv[])
     if (-1 == bind(sock, (struct sockaddr *) &serveraddr, sizeof(serveraddr)))
     {
         perror("error bind failed");
-        return 2;
         close(sock);
+        exit(EXIT_FAILURE);
+
     }
     if (-1 == listen(sock, backlog))
     {
+        perror("error listen failed");
         close(sock);
-        return 3;
+        exit(EXIT_FAILURE);
     }
     socklen_t addsize;
     sockaddr_in clientaddr;
@@ -58,8 +85,9 @@ int main(int argc, char *argv[])
     {
         if (-1 == (clientsock = accept(sock, (sockaddr *) &clientaddr, &addsize)))
         {
+            perror("error accept failed");
             close(sock);
-            return 4;
+            exit(EXIT_FAILURE);
         }
         printf("Client connected...\n");
 
