@@ -14,7 +14,7 @@ void sig_handler(int sig)
 {
     if (sig == SIGINT)
     {
-        printf("closing...\n")
+        printf("closing...\n");
         close(sock);
         close(clientsock);
         exit(EXIT_SUCCESS);
