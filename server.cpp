@@ -25,7 +25,7 @@ void sig_handler(int sig)
 int main(int argc, char *argv[])
 {
     unsigned short port = 4349;
-    char c;
+    int c;
 
     extern char *optarg;
     extern int optind;
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
         switch (argc - optind)
         {
             case 1:
-                port = atoi(argv[i]);
+                port = strtol(argv[i], NULL, 10);
                 break;
         }
     }

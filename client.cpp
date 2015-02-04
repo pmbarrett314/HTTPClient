@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 
     unsigned short port = 4349;
     char const *serverIP = "127.0.0.1";
-    char c;
+    int c;
     extern char *optarg;
     extern int optind;
     //Argument processing
@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
                 serverIP = argv[i];
                 break;
             case 2:
-                port = atoi(argv[i]);
+                port = strtol(argv[i], NULL, 10);
                 break;
         }
     }
