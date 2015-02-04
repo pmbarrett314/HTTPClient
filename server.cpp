@@ -24,16 +24,25 @@ void sig_handler(int sig)
 
 int main(int argc, char *argv[])
 {
-    unsigned short port = 4349;
+    unsigned short port;
     int c;
 
     extern char *optarg;
     extern int optind;
+
+    bool isPort;
     //Argument processing
-    while (-1 != (c = getopt(argc, argv, "")))
+    while (-1 != (c = getopt(argc, argv, "d")))
     {
+        switch (c)
+        {
+            case 'd':
+                port = 4349;
+                isPort = true;
+                break;
+        }
     }
-    if (argc - optind < 1)
+    if ((argc - optind < 1) || (((argc - optind < 0)) && isPort))
     {
         fprintf(stderr, "usage: %s serverport\n", argv[0]);
         exit(EXIT_FAILURE);

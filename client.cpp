@@ -11,16 +11,32 @@
 int main(int argc, char *argv[])
 {
 
-    unsigned short port = 4349;
-    char const *serverIP = "127.0.0.1";
+    unsigned short port;
+    char const *serverIP;
     int c;
     extern char *optarg;
     extern int optind;
+    bool isPort = false, isIP = false;
     //Argument processing
-    while (-1 != (c = getopt(argc, argv, "")))
+    while (-1 != (c = getopt(argc, argv, "adl")))
     {
+        switch (c)
+        {
+            case 'a':
+                serverIP = "54.148.84.242";
+                isIP = true;
+                break;
+            case 'l':
+                serverIP = "127.0.0.1;";
+                isIP = true;
+                break;
+            case 'd':
+                port = 4349;
+                isPort = true;
+                break;
+        }
     }
-    if (argc - optind < 2)
+    if ((argc - optind < 2) || (((argc - optind) < 1) && (isPort || isIP)) || (((argc - optind) < 0) && isPort && isIP))
     {
         fprintf(stderr, "usage: %s serverip serverport\n", argv[0]);
         exit(EXIT_FAILURE);
