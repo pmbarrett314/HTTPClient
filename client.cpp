@@ -9,7 +9,7 @@ int main()
 {
     int sock;
     unsigned short port = 4349;
-    char const *serverIP = "127.0.0.0";
+    char const *serverIP = "127.0.0.1";
     sockaddr_in serveraddr;
 
     if(-1==(sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)))
