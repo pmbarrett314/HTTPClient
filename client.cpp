@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     while (-1 != (c = getopt(argc, argv, "")))
     {
     }
-    if (argc - optind > 2)
+    if (argc - optind < 2)
     {
         fprintf(stderr, "usage: %s serverip serverport", argv[0]);
         exit(EXIT_FAILURE);

@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
     while (-1 != (c = getopt(argc, argv, "")))
     {
     }
-    if (argc - optind > 1)
+    if (argc - optind < 1)
     {
         fprintf(stderr, "usage: %s serverport", argv[0]);
         exit(EXIT_FAILURE);
