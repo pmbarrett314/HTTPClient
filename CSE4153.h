@@ -8,15 +8,15 @@ uint16_t validate_port(char *svalue, uint16_t def)
     long value = strtol(svalue, &end, 10);
     if (end == svalue)
     {
-        fprintf(stderr, "%s: not a decimal number\n", argv[i]);
+        fprintf(stderr, "%s: not a decimal number\n", svalue);
     }
     else if ('\0' != *end)
     {
-        fprintf(stderr, "%s: extra characters at end of input: %s\n", argv[i], end);
+        fprintf(stderr, "%s: extra characters at end of input: %s\n", svalue, end);
     }
     else if ((LONG_MIN == value || LONG_MAX == value) && ERANGE == errno)
     {
-        fprintf(stderr, "%s out of range of type long\n", argv[i]);
+        fprintf(stderr, "%s out of range of type long\n", svalue);
     }
     else if (value > UINT16_MAX)
     {
