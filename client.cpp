@@ -6,18 +6,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "CSE4153.h"
+
 #define BUFFERSIZE 500
 
 int main(int argc, char *argv[])
 {
 
-    unsigned int port;
-    char const *serverIP;
+    uint16_t port = 0;
+    char const *serverIP = "";
+
+    //Argument processing
     int c;
     extern char *optarg;
     extern int optind;
     bool isPort = false, isIP = false;
-    //Argument processing
+
     while (-1 != (c = getopt(argc, argv, "adl")))
     {
         switch (c)
@@ -34,6 +38,8 @@ int main(int argc, char *argv[])
                 port = 4349;
                 isPort = true;
                 break;
+            default:
+                continue;
         }
     }
     int argsleft = argc - optind;
@@ -51,27 +57,39 @@ int main(int argc, char *argv[])
                 serverIP = argv[i];
                 break;
             case 2:
-                port = strtol(argv[i], NULL, 10);
+                if (0 == (port = validate_port(argv[i], port)))
+                {
+                    fprintf(stderr, "port not set correctly, input was: %s", argv[i]);
+                    exit(EXIT_FAILURE);
+                }
                 break;
+
+            default:
+                continue;
         }
     }
 
 
     int sock;
-
-
     sockaddr_in serveraddr;
 
-    if(-1==(sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)))
+    if (-1 == (sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)))
     {
         perror("cannot create socket");
         exit(EXIT_FAILURE);
     }
-    memset(&serveraddr,0, sizeof(serveraddr));
+    memset(&serveraddr, 0, sizeof(serveraddr));
     serveraddr.sin_family = AF_INET;
     serveraddr.sin_port = htons(port);
-    inet_aton(serverIP, &serveraddr.sin_addr);
-    if(-1==connect(sock, (struct sockaddr *) &serveraddr, sizeof(serveraddr)))
+    int result;
+    if (0 >= (result = inet_pton(AF_INET, serverIP, &serveraddr.sin_addr)))
+    {
+        perror(0 > result ? "error: first parameter is not a valid address family" : "char string (second parameter does not contain valid ipaddress)");
+        close(sock);
+        exit(EXIT_FAILURE);
+    }
+
+    if (-1 == connect(sock, (struct sockaddr *) &serveraddr, sizeof(serveraddr)))
     {
         close(sock);
         perror("error connect failed");
@@ -82,6 +100,8 @@ int main(int argc, char *argv[])
     strncpy(buffer, "Hello server!\n", 15);
     send(sock, buffer, BUFFERSIZE, 0);
 
+    (void) shutdown(sock, SHUT_RDWR);
     close(sock);
-    return 0;
+    exit(EXIT_SUCCESS);
+
 }

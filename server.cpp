@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <sys/unistd.h>
 #include <stdlib.h>
+#include "CSE4153.h"
 
 #define BUFFERSIZE 500
 
@@ -24,14 +25,13 @@ void sig_handler(int sig)
 
 int main(int argc, char *argv[])
 {
-    unsigned int port;
-    int c;
+    unsigned short port = 0;
 
+    //Argument processing
     extern char *optarg;
     extern int optind;
-
+    int c;
     bool isPort = false;
-    //Argument processing
     while (-1 != (c = getopt(argc, argv, "d")))
     {
         switch (c)
@@ -40,6 +40,8 @@ int main(int argc, char *argv[])
                 port = 4349;
                 isPort = true;
                 break;
+            default:
+                continue;
         }
     }
 
@@ -55,28 +57,40 @@ int main(int argc, char *argv[])
         switch (i)
         {
             case 1:
-                port = strtol(argv[i], NULL, 10);
+                if (0 == (port = validate_port(argv[i], port)))
+                {
+                    fprintf(stderr, "port not set correctly, input was: %s", argv[i]);
+                    exit(EXIT_FAILURE);
+                }
                 break;
+            default:
+                continue;
         }
     }
+
+    //Begin Connecting
+    int backlog = 10;
+    sockaddr_in serveraddr;
+    socklen_t addsize;
 
     printf("Started...\n");
     if (signal(SIGINT, sig_handler) == SIG_ERR)
     {
         perror("error can't handle signal");
     }
-    int backlog = 10;
-    sockaddr_in serveraddr;
+
 
     if (-1 == (sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)))
     {
         perror("error socket not created");
         exit(EXIT_FAILURE);
     }
+
     serveraddr.sin_family = AF_INET;
     serveraddr.sin_port = htons(port);
     serveraddr.sin_addr.s_addr = INADDR_ANY;
     memset(&(serveraddr.sin_zero), 0, 8);
+
     if (-1 == bind(sock, (struct sockaddr *) &serveraddr, sizeof(serveraddr)))
     {
         perror("error bind failed");
@@ -90,11 +104,11 @@ int main(int argc, char *argv[])
         close(sock);
         exit(EXIT_FAILURE);
     }
-    socklen_t addsize;
-    sockaddr_in clientaddr;
+
     printf("Listening...\n");
     do
     {
+        sockaddr_in clientaddr;
         if (-1 == (clientsock = accept(sock, (sockaddr *) &clientaddr, &addsize)))
         {
             perror("error accept failed");
@@ -103,10 +117,20 @@ int main(int argc, char *argv[])
         }
         printf("Client connected...\n");
 
+
         char buffer[BUFFERSIZE];
         while (0 < recv(clientsock, buffer, BUFFERSIZE, 0))
         {
             printf(buffer);
+        }
+
+
+        if (-1 == shutdown(clientsock, SHUT_RDWR))
+        {
+            perror("cannot shutdown socket");
+            close(clientsock);
+            close(sock);
+            exit(EXIT_FAILURE);
         }
 
         close(clientsock);
