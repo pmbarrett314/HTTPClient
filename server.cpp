@@ -119,9 +119,13 @@ int main(int argc, char *argv[])
 
 
         char buffer[BUFFERSIZE];
-        while (0 < recv(clientsock, buffer, BUFFERSIZE, 0))
+        int received = 0;
+        while (0 < (received = recv(clientsock, buffer, BUFFERSIZE, 0)))
         {
             printf(buffer);
+            strncpy(&buffer[received], "  received", 9);
+            printf(buffer);
+
         }
 
 
