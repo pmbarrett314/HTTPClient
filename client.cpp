@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
             serverIP = argv[i];
             isIP = true;
         }
-        else if (!isPort && argsleft == 1)
+        else if (!isPort && (optind - 1) == 1)
         {
             if (0 == (port = validate_port(argv[i], port)))
             {
