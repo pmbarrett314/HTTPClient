@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
             printf("%s\n", buffer);
             if (strchr(buffer, 4) != NULL)
             {
-                printf("Client sent EOT on last message. Disconnecting...\n");
+                printf("Client sent EOT. Disconnecting...\n");
                 break;
             }
 
