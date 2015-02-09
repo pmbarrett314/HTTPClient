@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     int argsleft = argc - optind;
     if ((argsleft == 0 && (!isPort || !isIP)) || (argsleft == 1 && (!isPort && !isIP)))
     {
-        fprintf(stderr, "usage: %s serverip serverport [-adl]\nif any flag is specified, the corresponding argument is ignored", argv[0]);
+        fprintf(stderr, "usage: %s serverip serverport [-adl]\nif any flag is specified, the corresponding argument is ignored\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
@@ -113,6 +113,7 @@ int main(int argc, char *argv[])
     {
         close(sock);
         perror("error connect failed");
+        fprintf(stderr, "error connect failed: %s serverIP: %s port: %d\n", strerror(errno), serverIP, port);
         exit(EXIT_FAILURE);
     }
 

@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     int argsleft = argc - optind;
     if (argsleft == 0 && !isPort)
     {
-        fprintf(stderr, "usage: %s serverport [-d]\nif -d is specified serverport is ignored", argv[0]);
+        fprintf(stderr, "usage: %s serverport [-d]\nif -d is specified serverport is ignored\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
