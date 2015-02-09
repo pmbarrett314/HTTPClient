@@ -122,6 +122,7 @@ int main(int argc, char *argv[])
             if (!ferror(stdin))
             {
                 printf("EOF entered. disconnecting...\n");
+                send(sock, "\x04", 1, 0);
                 break;
             }
             else
