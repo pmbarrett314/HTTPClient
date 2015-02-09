@@ -8,7 +8,17 @@
 
 #include "CSE4153.h"
 
-#define BUFFERSIZE 500
+int sock;
+
+void sig_handler(int sig)
+{
+    if (sig == SIGINT)
+    {
+        printf("closing...\n");
+        close(sock);
+        exit(EXIT_SUCCESS);
+    }
+}
 
 int main(int argc, char *argv[])
 {
@@ -69,8 +79,12 @@ int main(int argc, char *argv[])
         }
     }
 
+    if (signal(SIGINT, sig_handler) == SIG_ERR)
+    {
+        perror("error can't handle signal");
+    }
+    printf("started...\n");
 
-    int sock;
     sockaddr_in serveraddr;
 
     if (-1 == (sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)))
@@ -96,12 +110,23 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    char buffer[BUFFERSIZE];
-    strncpy(buffer, "Hello server!\0", 15);
-    send(sock, buffer, 15, 0);
+    char buffer[BUFSIZ];
 
-    (void) shutdown(sock, SHUT_RDWR);
-    close(sock);
-    exit(EXIT_SUCCESS);
+    while (1)
+    {
+        char *p;
+        printf("Enter message, max size: %d\n", BUFSIZ);
+        if (NULL == fgets(buffer, sizeof(buffer), stdin))
+        {
+            perror("Input error: ");
+            close(sock);
+            exit(EXIT_FAILURE);
+        }
 
+        else if ((p = strchr(buffer, '\n')) != NULL)
+        {
+            *p = '\0';
+        }
+        send(sock, buffer, strlen(buffer) + 1, 0);
+    }
 }

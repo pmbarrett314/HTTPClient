@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
         printf("Client connected...\n");
 
 
-        char buffer[BUFFERSIZE];
+        char buffer[BUFSIZ];
         int received = 0;
         while (0 < (received = recv(clientsock, buffer, BUFFERSIZE, 0)))
         {
