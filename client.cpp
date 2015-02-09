@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     int argsleft = argc - optind;
     if ((argsleft == 0 && (!isPort || !isIP) || (argsleft == 1 && (!isPort && !isIP))))
     {
-        fprintf(stderr, "usage: %s serverip serverport\n", argv[0]);
+        fprintf(stderr, "usage: %s serverip serverport [-adl]\nif any flag is specified, the corresponding argument is ignored", argv[0]);
         exit(EXIT_FAILURE);
     }
 
@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
         send(sock, buffer, strlen(buffer) + 1, 0);
         char recvbuffer[BUFSIZ];
         recv(sock, recvbuffer, BUFSIZ, 0);
-        printf("server sent back: \"%s\"", recvbuffer);
+        printf("server sent back: \"%s\"\n", recvbuffer);
 
     }
     close(sock);
