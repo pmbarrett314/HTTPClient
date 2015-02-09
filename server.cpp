@@ -8,8 +8,6 @@
 #include <stdlib.h>
 #include "CSE4153.h"
 
-#define BUFFERSIZE 500
-
 int sock, clientsock;
 
 void sig_handler(int sig)
@@ -129,15 +127,15 @@ int main(int argc, char *argv[])
 
 
         char buffer[BUFSIZ];
-        while (0 < recv(clientsock, buffer, BUFFERSIZE, 0))
+        while (0 < recv(clientsock, buffer, BUFSIZ, 0))
         {
             if (strchr(buffer, 4) != NULL)
             {
                 printf("Client sent EOT. Disconnecting...\n");
                 break;
             }
-            strncat(buffer, " received", sizeof(" received"));
-            printf("%s\n", buffer);
+            printf("\"%s\" received \n", buffer);
+            send(clientsock, buffer, strlen(buffer), 0);
 
 
         }

@@ -113,10 +113,11 @@ int main(int argc, char *argv[])
 
     char buffer[BUFSIZ];
 
+    printf("Enter messages, max size: %d, ctrl + d to quit\n", BUFSIZ);
     while (1)
     {
         char *p;
-        printf("Enter message, max size: %d, ctrl + d to quit\n", BUFSIZ);
+
         if (NULL == fgets(buffer, sizeof(buffer), stdin))
         {
             if (!ferror(stdin))
@@ -139,6 +140,8 @@ int main(int argc, char *argv[])
             *p = '\0';
         }
         send(sock, buffer, strlen(buffer) + 1, 0);
+        char recvbuffer[BUFSIZ];
+        recv(sock, recvbuffer, BUFSIZ, 0);
 
     }
     close(sock);
