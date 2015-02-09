@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
         }
     }
     int argsleft = argc - optind;
-    if ((argsleft == 0 && (!isPort || !isIP) || (argsleft == 1 && (!isPort && !isIP))))
+    if ((argsleft == 0 && (!isPort || !isIP)) || (argsleft == 1 && (!isPort && !isIP)))
     {
         fprintf(stderr, "usage: %s serverip serverport [-adl]\nif any flag is specified, the corresponding argument is ignored", argv[0]);
         exit(EXIT_FAILURE);
