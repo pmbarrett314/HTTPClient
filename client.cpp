@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
         {
             if (!ferror(stdin))
             {
-                printf("EOF entered. disconnecting...\n");
+                printf("EOT entered. disconnecting...\n");
                 send(sock, "\x04\0", 2, 0);
                 break;
             }

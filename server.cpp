@@ -151,6 +151,7 @@ int main(int argc, char *argv[])
         }
 
         close(clientsock);
+        printf("client disconnected. listening...\n");
     } while (18);
 }
 
