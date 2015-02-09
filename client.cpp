@@ -116,12 +116,21 @@ int main(int argc, char *argv[])
     while (1)
     {
         char *p;
-        printf("Enter message, max size: %d\n", BUFSIZ);
+        printf("Enter message, max size: %d\n, ctrl + d to quit", BUFSIZ);
         if (NULL == fgets(buffer, sizeof(buffer), stdin))
         {
-            perror("Input error: ");
-            close(sock);
-            exit(EXIT_FAILURE);
+            if (!ferror(stdin))
+            {
+                perror("EOF entered. disconnecting...");
+                break;
+            }
+            else
+            {
+                perror("Input error : ");
+                close(sock);
+                exit(EXIT_FAILURE);
+            }
+
         }
 
         else if ((p = strchr(buffer, '\n')) != NULL)
@@ -130,11 +139,6 @@ int main(int argc, char *argv[])
         }
         printints(buffer);
         send(sock, buffer, strlen(buffer) + 1, 0);
-        if (strchr(buffer, 4) != NULL)
-        {
-            printf("disconnecting...\n");
-            break;
-        }
 
     }
     close(sock);
