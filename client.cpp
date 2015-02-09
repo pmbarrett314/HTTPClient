@@ -116,12 +116,12 @@ int main(int argc, char *argv[])
     while (1)
     {
         char *p;
-        printf("Enter message, max size: %d\n, ctrl + d to quit", BUFSIZ);
+        printf("Enter message, max size: %d, ctrl + d to quit\n", BUFSIZ);
         if (NULL == fgets(buffer, sizeof(buffer), stdin))
         {
             if (!ferror(stdin))
             {
-                perror("EOF entered. disconnecting...");
+                printf("EOF entered. disconnecting...\n");
                 break;
             }
             else
