@@ -133,9 +133,9 @@ int main(int argc, char *argv[])
         {
             strncat(buffer, " received", sizeof(" received"));
             printf("%s\n", buffer);
-            if (strchr(buffer, EOF) != NULL)
+            if (strchr(buffer, 4) != NULL)
             {
-                printf("Client sent EOF on last message. Disconnecting...\n");
+                printf("Client sent EOT on last message. Disconnecting...\n");
                 break;
             }
 
