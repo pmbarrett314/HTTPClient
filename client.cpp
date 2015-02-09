@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
             serverIP = argv[i];
             isIP = true;
         }
-        else if (!isPort && argsleft == (argc - 1))
+        else if (!isPort && argsleft == 1)
         {
             if (0 == (port = validate_port(argv[i], port)))
             {
@@ -112,7 +112,6 @@ int main(int argc, char *argv[])
     if (-1 == connect(sock, (struct sockaddr *) &serveraddr, sizeof(serveraddr)))
     {
         close(sock);
-        perror("error connect failed");
         fprintf(stderr, "error connect failed: %s serverIP: %s port: %d\n", strerror(errno), serverIP, port);
         exit(EXIT_FAILURE);
     }
