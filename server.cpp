@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
     //Begin Connecting
     int backlog = 10;
     sockaddr_in serveraddr;
-    socklen_t addsize;
+
 
     printf("Started...\n");
     if (signal(SIGINT, sig_handler) == SIG_ERR)
@@ -109,6 +109,7 @@ int main(int argc, char *argv[])
     do
     {
         sockaddr_in clientaddr;
+        socklen_t addsize = sizeof(clientaddr);
         if (-1 == (clientsock = accept(sock, (sockaddr *) &clientaddr, &addsize)))
         {
             perror("error accept failed");
