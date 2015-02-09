@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
     }
 
     char buffer[BUFFERSIZE];
-    strncpy(buffer, "Hello server!\0\n", 15);
+    strncpy(buffer, "Hello server!\0", 15);
     send(sock, buffer, 15, 0);
 
     (void) shutdown(sock, SHUT_RDWR);

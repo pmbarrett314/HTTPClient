@@ -123,9 +123,9 @@ int main(int argc, char *argv[])
         int received = 0;
         while (0 < (received = recv(clientsock, buffer, BUFFERSIZE, 0)))
         {
-            printf("%d %s", received, buffer);
+            printf("%d %s\n", received, buffer);
             strncat(buffer, " received", sizeof(" received"));
-            printf(buffer);
+            printf("%s\n", buffer);
 
         }
 
