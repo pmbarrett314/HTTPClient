@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
         while (0 < (received = recv(clientsock, buffer, BUFFERSIZE, 0)))
         {
             printf("%d %s", received, buffer);
-            strncpy(&buffer[received - 1], "  received", 9);
+            strncat(buffer, " received", sizeof(" received"));
             printf(buffer);
 
         }
