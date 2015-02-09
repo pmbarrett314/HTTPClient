@@ -91,6 +91,15 @@ int main(int argc, char *argv[])
     serveraddr.sin_addr.s_addr = INADDR_ANY;
     memset(&(serveraddr.sin_zero), 0, 8);
 
+    int yes = 1;
+
+    // lose the pesky "Address already in use" error message
+    if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1)
+    {
+        perror("setsockopt");
+        exit(1);
+    }
+
     if (-1 == bind(sock, (struct sockaddr *) &serveraddr, sizeof(serveraddr)))
     {
         perror("error bind failed");
