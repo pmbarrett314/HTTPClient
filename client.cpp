@@ -62,22 +62,21 @@ int main(int argc, char *argv[])
 
     for (int i = optind; i < argc; i++)
     {
-        switch (i)
+        if (!isIP && ((argsleft == (argc - i))))
         {
-            case 1:
-                serverIP = argv[i];
-                break;
-            case 2:
-                if (0 == (port = validate_port(argv[i], port)))
-                {
-                    fprintf(stderr, "port not set correctly, input was: %s", argv[i]);
-                    exit(EXIT_FAILURE);
-                }
-                break;
-
-            default:
-                continue;
+            serverIP = argv[i];
+            isIP = true;
         }
+        else if (!isPort && argsleft == (argc - 1))
+        {
+            if (0 == (port = validate_port(argv[i], port)))
+            {
+                fprintf(stderr, "port not set correctly, input was: %s", argv[i]);
+                exit(EXIT_FAILURE);
+            }
+            isPort = true;
+        }
+
     }
 
     if (signal(SIGINT, sig_handler) == SIG_ERR)
@@ -96,13 +95,18 @@ int main(int argc, char *argv[])
     memset(&serveraddr, 0, sizeof(serveraddr));
     serveraddr.sin_family = AF_INET;
     serveraddr.sin_port = htons(port);
-    int result;
-    if (0 >= (result = inet_pton(AF_INET, serverIP, &serveraddr.sin_addr)))
+    int result = inet_pton(AF_INET, serverIP, &serveraddr.sin_addr);
+    if (0 > result)
     {
         printf("%s:%d", serverIP, port);
-        perror(0 > result ? "error: first parameter is not a valid address family" : "char string (second parameter does not contain valid ipaddress)");
+        fprintf(stderr, "error: first parameter is not a valid address family: %s\n", strerror(errno));
+        perror;
         close(sock);
         exit(EXIT_FAILURE);
+    }
+    if (0 == result)
+    {
+        fprintf(stderr, "char string (second parameter does not contain valid ipaddress), second parameter was: %s: %s", serverIP, strerror(errno));
     }
 
     if (-1 == connect(sock, (struct sockaddr *) &serveraddr, sizeof(serveraddr)))
