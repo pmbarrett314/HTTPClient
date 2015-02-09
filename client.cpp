@@ -129,5 +129,13 @@ int main(int argc, char *argv[])
             *p = '\0';
         }
         send(sock, buffer, strlen(buffer) + 1, 0);
+        if (strchr(buffer, EOF) != NULL)
+        {
+            printf("disconnecting...\n");
+            break;
+        }
+
     }
+    close(sock);
+    exit(EXIT_SUCCESS);
 }

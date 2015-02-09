@@ -120,15 +120,17 @@ int main(int argc, char *argv[])
 
 
         char buffer[BUFSIZ];
-        int received = 0;
-        while (0 < (received = recv(clientsock, buffer, BUFFERSIZE, 0)))
+        while (0 < recv(clientsock, buffer, BUFFERSIZE, 0))
         {
-            printf("%d %s\n", received, buffer);
             strncat(buffer, " received", sizeof(" received"));
             printf("%s\n", buffer);
+            if (strchr(buffer, EOF) != NULL)
+            {
+                printf("Client sent EOF on last message. Disconnecting...\n");
+                break;
+            }
 
         }
-
 
         if (-1 == shutdown(clientsock, SHUT_RDWR))
         {
