@@ -138,7 +138,6 @@ int main(int argc, char *argv[])
         {
             *p = '\0';
         }
-        printints(buffer);
         send(sock, buffer, strlen(buffer) + 1, 0);
 
     }
