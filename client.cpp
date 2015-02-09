@@ -99,6 +99,7 @@ int main(int argc, char *argv[])
     int result;
     if (0 >= (result = inet_pton(AF_INET, serverIP, &serveraddr.sin_addr)))
     {
+        printf("%s:%d", serverIP, port);
         perror(0 > result ? "error: first parameter is not a valid address family" : "char string (second parameter does not contain valid ipaddress)");
         close(sock);
         exit(EXIT_FAILURE);
