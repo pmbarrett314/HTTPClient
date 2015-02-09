@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
                 isIP = true;
                 break;
             case 'l':
-                serverIP = "127.0.0.1;";
+                serverIP = "127.0.0.1";
                 isIP = true;
                 break;
             case 'd':
