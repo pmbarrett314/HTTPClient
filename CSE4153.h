@@ -1,5 +1,6 @@
 #include <sys/errno.h>
 #include <limits.h>
+#include <string.h>
 
 uint16_t validate_port(char *svalue, uint16_t def)
 {
@@ -31,4 +32,16 @@ uint16_t validate_port(char *svalue, uint16_t def)
         return (unsigned short) value;
     }
     return def;
+}
+
+
+void printints(char *buffer)
+{
+    printf("\n\n");
+    for (int i = 0; i <= strlen(buffer); i++)
+    {
+        printf("%c: %d, ", buffer[i], buffer[i]);
+    }
+
+    printf("\n\n");
 }

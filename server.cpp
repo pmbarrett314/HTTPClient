@@ -131,6 +131,7 @@ int main(int argc, char *argv[])
         char buffer[BUFSIZ];
         while (0 < recv(clientsock, buffer, BUFFERSIZE, 0))
         {
+            printints(buffer);
             strncat(buffer, " received", sizeof(" received"));
             printf("%s\n", buffer);
             if (strchr(buffer, 4) != NULL)
