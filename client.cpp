@@ -142,6 +142,7 @@ int main(int argc, char *argv[])
         send(sock, buffer, strlen(buffer) + 1, 0);
         char recvbuffer[BUFSIZ];
         recv(sock, recvbuffer, BUFSIZ, 0);
+        printf("server sent back: \"%s\"", recvbuffer);
 
     }
     close(sock);
