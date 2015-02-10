@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 
     for (int i = optind; i < argc; i++)
     {
-        if (!isIP && (i == argsleft))
+        if (!isIP && (i == optind))
         {
             serverIP = argv[i];
             isIP = true;
