@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
     }
     else if (0 == result)
     {
-        fprintf(stderr, "char string (second parameter does not contain valid ipaddress), second parameter was: %s\n", serverIP);
+        fprintf(stderr, "char string (invalid IP address), IP address entered was: %s\n", serverIP);
         close(sock);
         exit(EXIT_FAILURE);
     }
