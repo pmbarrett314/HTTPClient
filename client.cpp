@@ -62,9 +62,9 @@ int main(int argc, char *argv[])
 
     for (int i = optind; i < argc; i++)
     {
-        if (!isIP && ((i == argsleft)))
+        if (!isIP && (i == argsleft))
         {
-            printf("1: %d %d %s\n", i, argsleft, argv[i]);
+            printf("1: %d %d %s %d %d\n", i, argsleft, argv[i], argc, optind);
             serverIP = argv[i];
             isIP = true;
         }
