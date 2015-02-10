@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
     }
     if (0 == result)
     {
-        fprintf(stderr, "char string (second parameter does not contain valid ipaddress), second parameter was: %s: %s", serverIP, strerror(errno));
+        fprintf(stderr, "char string (second parameter does not contain valid ipaddress), second parameter was: %s: %s\n", serverIP, strerror(errno));
     }
 
     if (-1 == connect(sock, (struct sockaddr *) &serveraddr, sizeof(serveraddr)))
