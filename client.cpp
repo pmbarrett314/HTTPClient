@@ -35,7 +35,6 @@ int main(int argc, char *argv[])
 
     while (-1 != (c = getopt(argc, argv, "adl")))
     {
-        printf("%d", optind);
         switch (c)
         {
             case 'a':
@@ -65,13 +64,11 @@ int main(int argc, char *argv[])
     {
         if (!isIP && (i == argsleft))
         {
-            printf("1: %d %d %s %d %d\n", i, argsleft, argv[i], argc, optind);
             serverIP = argv[i];
             isIP = true;
         }
         else if (!isPort && (i == (argc - 1)))
         {
-            printf("2: %d %d %s\n", i, argc - 1, argv[i]);
             if (0 == (port = validate_port(argv[i], port)))
             {
                 fprintf(stderr, "port not set correctly, input was: %s\n", argv[i]);
@@ -86,7 +83,7 @@ int main(int argc, char *argv[])
     {
         perror("error can't handle signal");
     }
-    printf("started...\n");
+    printf("started with IP: %s, port: %d... \n", serverIP, port);
 
     sockaddr_in serveraddr;
 
