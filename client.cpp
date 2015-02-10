@@ -64,13 +64,13 @@ int main(int argc, char *argv[])
     {
         if (!isIP && ((i == argsleft)))
         {
-            printf("%d %d %s", i, argsleft, argv[i]);
+            printf("1: %d %d %s\n", i, argsleft, argv[i]);
             serverIP = argv[i];
             isIP = true;
         }
         else if (!isPort && (i == (argc - 1)))
         {
-            printf("%d %d %s", i, argc - 1, argv[i]);
+            printf("2: %d %d %s\n", i, argc - 1, argv[i]);
             if (0 == (port = validate_port(argv[i], port)))
             {
                 fprintf(stderr, "port not set correctly, input was: %s\n", argv[i]);
