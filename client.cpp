@@ -35,6 +35,7 @@ int main(int argc, char *argv[])
 
     while (-1 != (c = getopt(argc, argv, "adl")))
     {
+        printf("%d", optind);
         switch (c)
         {
             case 'a':
