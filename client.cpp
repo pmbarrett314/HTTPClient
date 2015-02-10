@@ -64,11 +64,13 @@ int main(int argc, char *argv[])
     {
         if (!isIP && ((i == argsleft)))
         {
+            printf("%d %d %s", i, argsleft, argv[i]);
             serverIP = argv[i];
             isIP = true;
         }
         else if (!isPort && (i == (argc - 1)))
         {
+            printf("%d %d %s", i, argc - 1, argv[i]);
             if (0 == (port = validate_port(argv[i], port)))
             {
                 fprintf(stderr, "port not set correctly, input was: %s\n", argv[i]);
@@ -104,7 +106,7 @@ int main(int argc, char *argv[])
     }
     else if (0 == result)
     {
-        fprintf(stderr, "char string (invalid IP address), IP address entered was: %s\n", serverIP);
+        fprintf(stderr, "invalid IP address, IP address entered was: %s\n", serverIP);
         close(sock);
         exit(EXIT_FAILURE);
     }
