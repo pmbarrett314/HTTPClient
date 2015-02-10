@@ -98,15 +98,15 @@ int main(int argc, char *argv[])
     int result = inet_pton(AF_INET, serverIP, &serveraddr.sin_addr);
     if (0 > result)
     {
-        printf("%s:%d", serverIP, port);
-        fprintf(stderr, "error: first parameter is not a valid address family: %s\n", strerror(errno));
-        perror;
+        perror("error: first parameter is not a valid address family: %s\n");
         close(sock);
         exit(EXIT_FAILURE);
     }
-    if (0 == result)
+    else if (0 == result)
     {
         fprintf(stderr, "char string (second parameter does not contain valid ipaddress), second parameter was: %s\n", serverIP);
+        close(sock);
+        exit(EXIT_FAILURE);
     }
 
     if (-1 == connect(sock, (struct sockaddr *) &serveraddr, sizeof(serveraddr)))
