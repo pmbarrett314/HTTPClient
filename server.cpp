@@ -9,8 +9,9 @@
 #include "CSE4153.h"
 
 int sock, clientsock;
+char *args[1];
 
-char **parse_arguments_and_flags(int argc, char *argv[]);
+void parse_arguments_and_flags(int argc, char *argv[]);
 
 unsigned short get_port_from_args(char **args);
 
@@ -30,7 +31,7 @@ void disconnect_client();
 
 int main(int argc, char *argv[])
 {
-    char **args = parse_arguments_and_flags(argc, argv);
+    parse_arguments_and_flags(argc, argv);
     unsigned short port = get_port_from_args(args);
     int max_clients = 1;
     handle_ctrl_c();
@@ -55,11 +56,11 @@ int main(int argc, char *argv[])
     exit(EXIT_SUCCESS);
 }
 
-char **parse_arguments_and_flags(int argc, char *argv[])
+void parse_arguments_and_flags(int argc, char *argv[])
 {
     //parses argv and returns an array of the finalized parameters as strings
     //return[0]=port
-    char *returnval[1];
+
     extern char *optarg;
     extern int optind;
     int c;
@@ -70,7 +71,7 @@ char **parse_arguments_and_flags(int argc, char *argv[])
         switch (c)
         {
             case 'd':
-                returnval[0] = defaultport;
+                args[0] = defaultport;
                 isPort = true;
                 break;
             default:
@@ -90,13 +91,12 @@ char **parse_arguments_and_flags(int argc, char *argv[])
         switch (i)
         {
             case 1:
-                returnval[0] = argv[i];
+                args[0] = argv[i];
                 break;
             default:
                 continue;
         }
     }
-    return returnval;
 }
 
 unsigned short get_port_from_args(char **args)
@@ -207,7 +207,7 @@ int communicate_with_client()
             printf("Client sent EOT. Disconnecting...\n");
             break;
         }
-        if (strstr(buffer, "*QUIT*") == NULL)
+        if (strstr(buffer, "*QUIT*") != NULL)
         {
             printf("Client sent *QUIT*, terminating server");
             exitv = 0;
