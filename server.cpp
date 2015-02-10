@@ -209,7 +209,7 @@ int communicate_with_client()
         }
         if (strstr(buffer, "*QUIT*") != NULL)
         {
-            printf("Client sent *QUIT*, terminating server");
+            printf("Client sent *QUIT*, terminating server\n");
             exitv = 0;
             break;
         }
