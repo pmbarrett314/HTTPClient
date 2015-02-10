@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
         {
             if (0 == (port = validate_port(argv[i], port)))
             {
-                fprintf(stderr, "port not set correctly, input was: %s", argv[i]);
+                fprintf(stderr, "port not set correctly, input was: %s\n", argv[i]);
                 exit(EXIT_FAILURE);
             }
             isPort = true;
