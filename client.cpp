@@ -62,12 +62,12 @@ int main(int argc, char *argv[])
 
     for (int i = optind; i < argc; i++)
     {
-        if (!isIP && ((argsleft == (argc - i))))
+        if (!isIP && ((i == argsleft)))
         {
             serverIP = argv[i];
             isIP = true;
         }
-        else if (!isPort && (optind - 1) == 1)
+        else if (!isPort && (i == (argc - 1)))
         {
             if (0 == (port = validate_port(argv[i], port)))
             {
