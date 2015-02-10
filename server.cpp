@@ -10,7 +10,7 @@
 
 int sock, clientsock;
 
-void sig_handler(int sig)
+void handler(int sig)
 {
     if (sig == SIGINT)
     {
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
     }
 
     int argsleft = argc - optind;
-    if (argsleft == 0 && !isPort)
+    if (!isPort && argsleft == 0)
     {
         fprintf(stderr, "usage: %s serverport [-d]\nif -d is specified serverport is ignored\n", argv[0]);
         exit(EXIT_FAILURE);
@@ -66,17 +66,24 @@ int main(int argc, char *argv[])
         }
     }
 
-    //Begin Connecting
-    int backlog = 10;
-    sockaddr_in serveraddr;
+    //handle ctrl+c
+    struct sigaction sa;
+    sa.sa_handler = handler;
+    if (-1 == sigemptyset(&sa.sa_mask))
+    {
+        perror("sigemptyset: ");
+    }
+    sa.sa_flags = SA_RESTART;
 
-
-    printf("Started...\n");
-    if (signal(SIGINT, sig_handler) == SIG_ERR)
+    if (sigaction(SIGINT, &sa, NULL) == -1)
     {
         perror("error can't handle signal");
     }
 
+    //Begin Connecting
+    int backlog = 10;
+    sockaddr_in serveraddr;
+    printf("Started...\n");
 
     if (-1 == (sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)))
     {
@@ -89,9 +96,9 @@ int main(int argc, char *argv[])
     serveraddr.sin_addr.s_addr = INADDR_ANY;
     memset(&(serveraddr.sin_zero), 0, 8);
 
-    int yes = 1;
 
     // lose the pesky "Address already in use" error message
+    int yes = 1;
     if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1)
     {
         perror("setsockopt");

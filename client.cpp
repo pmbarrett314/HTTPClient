@@ -11,7 +11,7 @@
 
 int sock;
 
-void sig_handler(int sig)
+void handler(int sig)
 {
     if (sig == SIGINT)
     {
@@ -79,10 +79,21 @@ int main(int argc, char *argv[])
 
     }
 
-    if (signal(SIGINT, sig_handler) == SIG_ERR)
+    //handle ctrl+c
+    struct sigaction sa;
+    sa.sa_handler = handler;
+    if (-1 == sigemptyset(&sa.sa_mask))
+    {
+        perror("sigemptyset: ");
+    }
+    sa.sa_flags = SA_RESTART;
+
+    if (sigaction(SIGINT, &sa, NULL) == -1)
     {
         perror("error can't handle signal");
     }
+
+    //start client
     printf("started with IP: %s, port: %d... \n", serverIP, port);
 
     sockaddr_in serveraddr;
