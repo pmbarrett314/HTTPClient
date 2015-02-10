@@ -2,7 +2,7 @@
 #include <limits.h>
 #include <string.h>
 
-uint16_t validate_port(char *svalue, uint16_t def)
+uint16_t validate_port(char const *svalue, uint16_t def)
 {
     errno = 0;
     char *end;

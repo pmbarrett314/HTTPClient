@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
 
     char buffer[BUFSIZ];
 
-    printf("Enter messages, max size: %d, ctrl + d to quit\n", BUFSIZ);
+    printf("Enter messages, max size: %d, ctrl + d to quit, *QUIT* to kill server \n", BUFSIZ);
     while (1)
     {
         char *p;

@@ -10,32 +10,67 @@
 
 int sock, clientsock;
 
-void handler(int sig)
-{
-    if (sig == SIGINT)
-    {
-        printf("closing...\n");
-        close(sock);
-        close(clientsock);
-        exit(EXIT_SUCCESS);
-    }
-}
+char **parse_arguments_and_flags(int argc, char *argv[]);
+
+unsigned short get_port_from_args(char **args);
+
+void handle_ctrl_c();
+
+void create_socket();
+
+void bind_socket(unsigned short port);
+
+void listen_to_socket(int backlog);
+
+void accept_client();
+
+int communicate_with_client();
+
+void disconnect_client();
 
 int main(int argc, char *argv[])
 {
-    unsigned short port = 0;
+    char **args = parse_arguments_and_flags(argc, argv);
+    unsigned short port = get_port_from_args(args);
+    int max_clients = 1;
+    handle_ctrl_c();
+    printf("Started...\n");
+    create_socket();
+    bind_socket(port);
+    listen_to_socket(max_clients);
+    printf("Listening...\n");
+    int exitv = 0;
+    do
+    {
+        accept_client();
+        printf("Client connected...\n");
+        exitv = communicate_with_client();
+        disconnect_client();
+        printf("client disconnected. listening...\n");
+    } while (0 != exitv);
 
-    //Argument processing
+    printf("closing...\n");
+    close(sock);
+    close(clientsock);
+    exit(EXIT_SUCCESS);
+}
+
+char **parse_arguments_and_flags(int argc, char *argv[])
+{
+    //parses argv and returns an array of the finalized parameters as strings
+    //return[0]=port
+    char *returnval[1];
     extern char *optarg;
     extern int optind;
     int c;
     bool isPort = false;
+    char *defaultport = "4349";
     while (-1 != (c = getopt(argc, argv, "d")))
     {
         switch (c)
         {
             case 'd':
-                port = 4349;
+                returnval[0] = defaultport;
                 isPort = true;
                 break;
             default:
@@ -55,18 +90,41 @@ int main(int argc, char *argv[])
         switch (i)
         {
             case 1:
-                if (0 == (port = validate_port(argv[i], port)))
-                {
-                    fprintf(stderr, "port not set correctly, input was: %s", argv[i]);
-                    exit(EXIT_FAILURE);
-                }
+                returnval[0] = argv[i];
                 break;
             default:
                 continue;
         }
     }
+    return returnval;
+}
 
-    //handle ctrl+c
+unsigned short get_port_from_args(char **args)
+{
+    //returns the port, which is currently args[0]
+    unsigned short port = 0;
+    char *portstring = args[0];
+    if (0 == (port = validate_port(portstring, port)))
+    {
+        fprintf(stderr, "port not set correctly, input was: %s", portstring);
+        exit(EXIT_FAILURE);
+    }
+    return port;
+}
+
+void handler(int sig)
+{
+    if (sig == SIGINT)
+    {
+        printf("closing...\n");
+        close(sock);
+        close(clientsock);
+        exit(EXIT_SUCCESS);
+    }
+}
+
+void handle_ctrl_c()
+{
     struct sigaction sa;
     sa.sa_handler = handler;
     if (-1 == sigemptyset(&sa.sa_mask))
@@ -79,23 +137,15 @@ int main(int argc, char *argv[])
     {
         perror("error can't handle signal");
     }
+}
 
-    //Begin Connecting
-    int backlog = 10;
-    sockaddr_in serveraddr;
-    printf("Started...\n");
-
+void create_socket()
+{
     if (-1 == (sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)))
     {
         perror("error socket not created");
         exit(EXIT_FAILURE);
     }
-
-    serveraddr.sin_family = AF_INET;
-    serveraddr.sin_port = htons(port);
-    serveraddr.sin_addr.s_addr = INADDR_ANY;
-    memset(&(serveraddr.sin_zero), 0, 8);
-
 
     // lose the pesky "Address already in use" error message
     int yes = 1;
@@ -104,59 +154,79 @@ int main(int argc, char *argv[])
         perror("setsockopt");
         exit(1);
     }
+}
+
+void bind_socket(unsigned short port)
+{
+    sockaddr_in serveraddr;
+
+    serveraddr.sin_family = AF_INET;
+    serveraddr.sin_port = htons(port);
+    serveraddr.sin_addr.s_addr = INADDR_ANY;
+    memset(&(serveraddr.sin_zero), 0, 8);
 
     if (-1 == bind(sock, (struct sockaddr *) &serveraddr, sizeof(serveraddr)))
     {
         perror("error bind failed");
         close(sock);
         exit(EXIT_FAILURE);
-
     }
+}
+
+void listen_to_socket(int backlog)
+{
     if (-1 == listen(sock, backlog))
     {
         perror("error listen failed");
         close(sock);
         exit(EXIT_FAILURE);
     }
-
-    printf("Listening...\n");
-    do
-    {
-        sockaddr_in clientaddr;
-        socklen_t addsize = sizeof(clientaddr);
-        if (-1 == (clientsock = accept(sock, (sockaddr *) &clientaddr, &addsize)))
-        {
-            perror("error accept failed");
-            close(sock);
-            exit(EXIT_FAILURE);
-        }
-        printf("Client connected...\n");
-
-
-        char buffer[BUFSIZ];
-        while (0 < recv(clientsock, buffer, BUFSIZ, 0))
-        {
-            if (strchr(buffer, 4) != NULL)
-            {
-                printf("Client sent EOT. Disconnecting...\n");
-                break;
-            }
-            printf("\"%s\" received \n", buffer);
-            send(clientsock, buffer, strlen(buffer), 0);
-
-
-        }
-
-        if (-1 == shutdown(clientsock, SHUT_RDWR))
-        {
-            perror("cannot shutdown socket");
-            close(clientsock);
-            close(sock);
-            exit(EXIT_FAILURE);
-        }
-
-        close(clientsock);
-        printf("client disconnected. listening...\n");
-    } while (18);
 }
 
+void accept_client()
+{
+    sockaddr_in clientaddr;
+    socklen_t addsize = sizeof(clientaddr);
+    if (-1 == (clientsock = accept(sock, (sockaddr *) &clientaddr, &addsize)))
+    {
+        perror("error accept failed");
+        close(sock);
+        exit(EXIT_FAILURE);
+    }
+}
+
+int communicate_with_client()
+{
+    //returns 1 if valid, 0 if should quit
+    int exitv = 1;
+    char buffer[BUFSIZ];
+    while (0 < recv(clientsock, buffer, BUFSIZ, 0))
+    {
+        if (strchr(buffer, 4) != NULL)
+        {
+            printf("Client sent EOT. Disconnecting...\n");
+            break;
+        }
+        if (strstr(buffer, "*QUIT*") == NULL)
+        {
+            printf("Client sent *QUIT*, terminating server");
+            exitv = 0;
+            break;
+        }
+        printf("\"%s\" received \n", buffer);
+        send(clientsock, buffer, strlen(buffer), 0);
+    }
+    return exitv;
+}
+
+void disconnect_client()
+{
+    if (-1 == shutdown(clientsock, SHUT_RDWR))
+    {
+        perror("cannot shutdown socket");
+        close(clientsock);
+        close(sock);
+        exit(EXIT_FAILURE);
+    }
+    close(clientsock);
+}
