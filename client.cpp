@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
         char buffer[BUFSIZ];
         get_input_from_user(buffer);
         exitv = send_message_to_server(buffer);
-        if (exitv != 0)
+        if (0 != exitv)
         {
             char recvbuffer[BUFSIZ];
             recv(sock, recvbuffer, BUFSIZ, 0);

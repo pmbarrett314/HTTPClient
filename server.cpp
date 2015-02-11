@@ -47,7 +47,14 @@ int main(int argc, char *argv[])
         printf("Client connected...\n");
         exitv = communicate_with_client();
         disconnect_client();
-        printf("client disconnected. listening...\n");
+        if (0 != exitv)
+        {
+            printf("client disconnected. listening...\n");
+        }
+        else
+        {
+            printf("client disconnected. ");
+        }
     } while (0 != exitv);
 
     printf("closing...\n");
@@ -209,7 +216,7 @@ int communicate_with_client()
         }
         if (strstr(buffer, "*QUIT*") != NULL)
         {
-            printf("Client sent *QUIT*, terminating server\n");
+            printf("Client sent *QUIT*, terminating server...\n");
             exitv = 0;
             break;
         }
