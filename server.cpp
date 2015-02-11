@@ -33,19 +33,24 @@ int main(int argc, char *argv[])
 {
     parse_arguments_and_flags(argc, argv);
     uint16_t port = get_port_from_args();
-    int max_clients = 1;
     handle_ctrl_c();
+
     printf("Started...\n");
     create_socket();
     bind_socket(port);
+
+    int max_clients = 1;
     listen_to_socket(max_clients);
     printf("Listening...\n");
+
     int exitv = 0;
     do
     {
         accept_client();
+
         printf("Client connected...\n");
         exitv = communicate_with_client();
+
         disconnect_client();
         if (0 != exitv)
         {
@@ -65,14 +70,14 @@ int main(int argc, char *argv[])
 
 void parse_arguments_and_flags(int argc, char *argv[])
 {
-    //parses argv and returns an array of the finalized parameters as strings
-    //return[0]=port
-
+    //parses argv and sets the value of args[0] to the port as a string
     extern char *optarg;
     extern int optind;
     int c;
     bool isPort = false;
     char const *defaultport = "4349";
+
+    //parse flags
     while (-1 != (c = getopt(argc, argv, "d")))
     {
         switch (c)
@@ -86,13 +91,14 @@ void parse_arguments_and_flags(int argc, char *argv[])
         }
     }
 
-    int argsleft = argc - optind;
-    if (!isPort && argsleft == 0)
+    //check that enough flags and arguments were given
+    if (!isPort && ((argc - optind) == 0))
     {
         fprintf(stderr, "usage: %s serverport [-d]\nif -d is specified serverport is ignored\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
+    //fill in args with command line arguments if needed
     for (int i = optind; i < argc; i++)
     {
         switch (i)
@@ -108,7 +114,8 @@ void parse_arguments_and_flags(int argc, char *argv[])
 
 uint16_t get_port_from_args()
 {
-    //returns the port, which is currently args[0]
+    //returns the port, which is currently args[0], as a uint16_t
+    //the argument parsing should be run first
     uint16_t port = 0;
     char const *portstring = args[0];
     if (0 == (port = validate_port(portstring, port)))
@@ -121,6 +128,7 @@ uint16_t get_port_from_args()
 
 void handler(int sig)
 {
+    //handles cleanup when user presses ctrl+c
     if (sig == SIGINT)
     {
         printf("closing...\n");
@@ -132,6 +140,7 @@ void handler(int sig)
 
 void handle_ctrl_c()
 {
+    //sets the ctrl+c handler properly
     struct sigaction sa;
     sa.sa_handler = handler;
     if (-1 == sigemptyset(&sa.sa_mask))
@@ -148,6 +157,7 @@ void handle_ctrl_c()
 
 void create_socket()
 {
+    //create our server socket
     if (-1 == (sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)))
     {
         perror("error socket not created");
@@ -165,7 +175,7 @@ void create_socket()
 
 void bind_socket(uint16_t port)
 {
-
+    //bind the socket to the given port
     sockaddr_in serveraddr;
 
     serveraddr.sin_family = AF_INET;
@@ -183,6 +193,7 @@ void bind_socket(uint16_t port)
 
 void listen_to_socket(int backlog)
 {
+    //begin listening on the port with the given backlog of connections
     if (-1 == listen(sock, backlog))
     {
         perror("error listen failed");
@@ -193,6 +204,7 @@ void listen_to_socket(int backlog)
 
 void accept_client()
 {
+    //wait until client connects and accept
     sockaddr_in clientaddr;
     socklen_t addsize = sizeof(clientaddr);
     if (-1 == (clientsock = accept(sock, (sockaddr *) &clientaddr, &addsize)))
@@ -205,6 +217,9 @@ void accept_client()
 
 int communicate_with_client()
 {
+    //perform communication with client
+    //receive data from the client, print it, then echo it back
+    //check for flag values of ctrl+d or *QUIT* from the client
     //returns 1 if valid, 0 if should quit
     int exitv = 1;
     char buffer[BUFSIZ];
@@ -229,6 +244,7 @@ int communicate_with_client()
 
 void disconnect_client()
 {
+    //cleanup and close the client connection
     if (-1 == shutdown(clientsock, SHUT_RDWR))
     {
         perror("cannot shutdown socket");
