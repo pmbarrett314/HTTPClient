@@ -235,5 +235,6 @@ int send_message_to_server(char *buffer)
         }
         send(sock, buffer, strlen(buffer) + 1, 0);
     }
+    printints(buffer);
     return retval;
 };

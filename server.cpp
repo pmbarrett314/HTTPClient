@@ -202,6 +202,7 @@ int communicate_with_client()
     char buffer[BUFSIZ];
     while (0 < recv(clientsock, buffer, BUFSIZ, 0))
     {
+        printints(buffer);
         if (strchr(buffer, 4) != NULL)
         {
             printf("Client sent EOT. Disconnecting...\n");
