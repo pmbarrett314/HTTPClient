@@ -193,6 +193,7 @@ void connect_to_server(uint16_t port, struct in_addr serverIP)
 
 void get_input_from_user(char *buffer)
 {
+    printf("\n\n%d\n\n", (int) sizeof(buffer));
     if (NULL == fgets(buffer, sizeof(buffer), stdin))
     {
         if (!ferror(stdin))
