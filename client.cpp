@@ -10,7 +10,7 @@
 #include "CSE4153.h"
 
 int sock;
-char *args[2];
+char const *args[2];
 
 void parse_arguments_and_flags(int argc, char *argv[]);
 
@@ -60,9 +60,9 @@ void parse_arguments_and_flags(int argc, char *argv[])
     extern char *optarg;
     extern int optind;
     bool isPort = false, isIP = false;
-    char *amazonIP = "54.148.84.242";
-    char *localhost = "127.0.0.1";
-    char *defaultport = "4349";
+    char const *amazonIP = "54.148.84.242";
+    char const *localhost = "127.0.0.1";
+    char const *defaultport = "4349";
 
     while (-1 != (c = getopt(argc, argv, "adl")))
     {
@@ -112,7 +112,7 @@ uint16_t get_port_from_args()
 {
     //returns the port, which is currently args[0]
     uint16_t port = 0;
-    char *portstring = args[1];
+    char const *portstring = args[1];
     if (0 == (port = validate_port(portstring, port)))
     {
         fprintf(stderr, "port not set correctly, input was: %s", portstring);

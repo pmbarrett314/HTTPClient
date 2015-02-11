@@ -9,7 +9,7 @@
 #include "CSE4153.h"
 
 int sock, clientsock;
-char *args[1];
+char const *args[1];
 
 void parse_arguments_and_flags(int argc, char *argv[]);
 
@@ -65,7 +65,7 @@ void parse_arguments_and_flags(int argc, char *argv[])
     extern int optind;
     int c;
     bool isPort = false;
-    char *defaultport = "4349";
+    char const *defaultport = "4349";
     while (-1 != (c = getopt(argc, argv, "d")))
     {
         switch (c)
@@ -103,7 +103,7 @@ uint16_t get_port_from_args()
 {
     //returns the port, which is currently args[0]
     uint16_t port = 0;
-    char *portstring = args[0];
+    char const *portstring = args[0];
     if (0 == (port = validate_port(portstring, port)))
     {
         fprintf(stderr, "port not set correctly, input was: %s", portstring);
