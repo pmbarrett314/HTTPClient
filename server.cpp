@@ -167,7 +167,10 @@ void bind_socket(uint16_t port)
 {
     if (port < 1024)
     {
-        setuid(0);
+        if (setuid(0) == -1)
+        {
+            perror("setuid failed");
+        }
     }
 
     sockaddr_in serveraddr;
