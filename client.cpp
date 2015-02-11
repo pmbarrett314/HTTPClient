@@ -48,6 +48,7 @@ int main(int argc, char *argv[])
         char recvbuffer[BUFSIZ];
         recv(sock, recvbuffer, BUFSIZ, 0);
         printf("server sent back: \"%s\"\n", recvbuffer);
+        printf("Loop");
 
     } while (0 != exitv);
     close(sock);
@@ -213,7 +214,7 @@ void get_input_from_user(char *buffer)
 int send_message_to_server(char *buffer)
 {
     //returns 1 if valid, 0 if should quit
-    int retval = 1;
+    int retval;
     if (strstr(buffer, "\x04\0") != NULL)
     {
         printf("EOT entered. disconnecting...\n");
@@ -234,6 +235,7 @@ int send_message_to_server(char *buffer)
             *p = '\0';
         }
         send(sock, buffer, strlen(buffer) + 1, 0);
+        retval = 1;
     }
     printints(buffer);
     return retval;
