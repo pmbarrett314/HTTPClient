@@ -13,13 +13,13 @@ char *args[1];
 
 void parse_arguments_and_flags(int argc, char *argv[]);
 
-unsigned short get_port_from_args(char **args);
+uint16_t get_port_from_args();
 
 void handle_ctrl_c();
 
 void create_socket();
 
-void bind_socket(unsigned short port);
+void bind_socket(uint16_t port);
 
 void listen_to_socket(int backlog);
 
@@ -32,7 +32,7 @@ void disconnect_client();
 int main(int argc, char *argv[])
 {
     parse_arguments_and_flags(argc, argv);
-    unsigned short port = get_port_from_args(args);
+    uint16_t port = get_port_from_args();
     int max_clients = 1;
     handle_ctrl_c();
     printf("Started...\n");
@@ -99,10 +99,10 @@ void parse_arguments_and_flags(int argc, char *argv[])
     }
 }
 
-unsigned short get_port_from_args(char **args)
+uint16_t get_port_from_args()
 {
     //returns the port, which is currently args[0]
-    unsigned short port = 0;
+    uint16_t port = 0;
     char *portstring = args[0];
     if (0 == (port = validate_port(portstring, port)))
     {
@@ -156,7 +156,7 @@ void create_socket()
     }
 }
 
-void bind_socket(unsigned short port)
+void bind_socket(uint16_t port)
 {
     sockaddr_in serveraddr;
 

@@ -10,43 +10,74 @@
 #include "CSE4153.h"
 
 int sock;
+char *args[2];
 
-void handler(int sig)
-{
-    if (sig == SIGINT)
-    {
-        printf("closing...\n");
-        close(sock);
-        exit(EXIT_SUCCESS);
-    }
-}
+void parse_arguments_and_flags(int argc, char *argv[]);
+
+uint16_t get_port_from_args();
+
+struct in_addr get_IP_from_args();
+
+void handle_ctrl_c();
+
+void create_socket();
+
+void connect_to_server(uint16_t port, struct in_addr serverIP);
+
+void get_input_from_user(char *buffer);
+
+int send_message_to_server(char *buffer);
 
 int main(int argc, char *argv[])
 {
 
-    uint16_t port = 0;
-    char const *serverIP = "";
+    parse_arguments_and_flags(argc, argv);
+    uint16_t port = get_port_from_args();
+    struct in_addr serverIP = get_IP_from_args();
+    printf("started with IP: %s, port: %d... \n", args[1], port);
+    create_socket();
+    connect_to_server(port, serverIP);
+    printf("Connected...\nEnter messages, max size: %d, ctrl + d to quit, *QUIT* to kill server \n", BUFSIZ);
 
-    //Argument processing
+    int exitv = 0;
+    do
+    {
+        char buffer[BUFSIZ];
+        get_input_from_user(buffer);
+        send_message_to_server(buffer);
+        char recvbuffer[BUFSIZ];
+        recv(sock, recvbuffer, BUFSIZ, 0);
+        printf("server sent back: \"%s\"\n", recvbuffer);
+
+    } while (0 != exitv);
+    close(sock);
+    exit(EXIT_SUCCESS);
+}
+
+void parse_arguments_and_flags(int argc, char *argv[])
+{
     int c;
     extern char *optarg;
     extern int optind;
     bool isPort = false, isIP = false;
+    char *amazonIP = "54.148.84.242";
+    char *localhost = "127.0.0.1";
+    char *defaultport = "4349";
 
     while (-1 != (c = getopt(argc, argv, "adl")))
     {
         switch (c)
         {
             case 'a':
-                serverIP = "54.148.84.242";
+                args[0] = amazonIP;
                 isIP = true;
                 break;
             case 'l':
-                serverIP = "127.0.0.1";
+                args[0] = localhost;
                 isIP = true;
                 break;
             case 'd':
-                port = 4349;
+                args[1] = defaultport;
                 isPort = true;
                 break;
             default:
@@ -64,22 +95,65 @@ int main(int argc, char *argv[])
     {
         if (!isIP && (i == optind))
         {
-            serverIP = argv[i];
+            args[0] = argv[i];
             isIP = true;
         }
         else if (!isPort && (i == (argc - 1)))
         {
-            if (0 == (port = validate_port(argv[i], port)))
-            {
-                fprintf(stderr, "port not set correctly, input was: %s\n", argv[i]);
-                exit(EXIT_FAILURE);
-            }
+            args[1] = argv[i];
             isPort = true;
         }
 
     }
 
-    //handle ctrl+c
+}
+
+uint16_t get_port_from_args()
+{
+    //returns the port, which is currently args[0]
+    uint16_t port = 0;
+    char *portstring = args[1];
+    if (0 == (port = validate_port(portstring, port)))
+    {
+        fprintf(stderr, "port not set correctly, input was: %s", portstring);
+        exit(EXIT_FAILURE);
+    }
+    return port;
+}
+
+struct in_addr get_IP_from_args()
+{
+    struct in_addr IP;
+
+    int result = inet_pton(AF_INET, args[1], &IP);
+    if (0 > result)
+    {
+        perror("error: first parameter is not a valid address family: %s\n");
+        close(sock);
+        exit(EXIT_FAILURE);
+    }
+    else if (0 == result)
+    {
+        fprintf(stderr, "invalid IP address, IP address entered was: %s\n", args[1]);
+        close(sock);
+        exit(EXIT_FAILURE);
+    }
+    return IP;
+
+}
+
+void handler(int sig)
+{
+    if (sig == SIGINT)
+    {
+        printf("closing...\n");
+        close(sock);
+        exit(EXIT_SUCCESS);
+    }
+}
+
+void handle_ctrl_c()
+{
     struct sigaction sa;
     sa.sa_handler = handler;
     if (-1 == sigemptyset(&sa.sa_mask))
@@ -92,75 +166,77 @@ int main(int argc, char *argv[])
     {
         perror("error can't handle signal");
     }
+}
 
-    //start client
-    printf("started with IP: %s, port: %d... \n", serverIP, port);
-
-    sockaddr_in serveraddr;
-
+void create_socket()
+{
     if (-1 == (sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)))
     {
         perror("cannot create socket");
         exit(EXIT_FAILURE);
     }
+}
+
+void connect_to_server(uint16_t port, struct in_addr serverIP)
+{
+    sockaddr_in serveraddr;
+
     memset(&serveraddr, 0, sizeof(serveraddr));
     serveraddr.sin_family = AF_INET;
     serveraddr.sin_port = htons(port);
-    int result = inet_pton(AF_INET, serverIP, &serveraddr.sin_addr);
-    if (0 > result)
-    {
-        perror("error: first parameter is not a valid address family: %s\n");
-        close(sock);
-        exit(EXIT_FAILURE);
-    }
-    else if (0 == result)
-    {
-        fprintf(stderr, "invalid IP address, IP address entered was: %s\n", serverIP);
-        close(sock);
-        exit(EXIT_FAILURE);
-    }
+    serveraddr.sin_addr = serverIP;
 
     if (-1 == connect(sock, (struct sockaddr *) &serveraddr, sizeof(serveraddr)))
     {
         close(sock);
-        fprintf(stderr, "error connect failed: %s serverIP: %s port: %d\n", strerror(errno), serverIP, port);
+        fprintf(stderr, "error connect failed: %s serverIP: %s port: %d\n", strerror(errno), args[0], port);
         exit(EXIT_FAILURE);
     }
 
-    char buffer[BUFSIZ];
+}
 
-    printf("Enter messages, max size: %d, ctrl + d to quit, *QUIT* to kill server \n", BUFSIZ);
-    while (1)
+void get_input_from_user(char *buffer)
+{
+    if (NULL == fgets(buffer, sizeof(buffer), stdin))
+    {
+        if (!ferror(stdin))
+        {
+            buffer[0] = 4;
+            buffer[1] = '\0';
+        }
+        else
+        {
+            perror("Input error : ");
+            close(sock);
+            exit(EXIT_FAILURE);
+        }
+    }
+}
+
+int send_message_to_server(char *buffer)
+{
+    //returns 1 if valid, 0 if should quit
+    int retval = 1;
+    if (strstr(buffer, "\x04\0") != NULL)
+    {
+        printf("EOT entered. disconnecting...\n");
+        send(sock, buffer, strlen(buffer) + 1, 0);
+        retval = 0;
+    }
+    else if (strstr(buffer, "*QUIT*") != NULL)
+    {
+        printf("*QUIT* entered. disconnecting and killing server...\n");
+        send(sock, buffer, strlen(buffer) + 1, 0);
+        retval = 0;
+    }
+    else
     {
         char *p;
-
-        if (NULL == fgets(buffer, sizeof(buffer), stdin))
-        {
-            if (!ferror(stdin))
-            {
-                printf("EOT entered. disconnecting...\n");
-                send(sock, "\x04\0", 2, 0);
-                break;
-            }
-            else
-            {
-                perror("Input error : ");
-                close(sock);
-                exit(EXIT_FAILURE);
-            }
-
-        }
-
-        else if ((p = strchr(buffer, '\n')) != NULL)
+        if ((p = strchr(buffer, '\n')) != NULL)
         {
             *p = '\0';
         }
         send(sock, buffer, strlen(buffer) + 1, 0);
-        char recvbuffer[BUFSIZ];
-        recv(sock, recvbuffer, BUFSIZ, 0);
-        printf("server sent back: \"%s\"\n", recvbuffer);
-
     }
-    close(sock);
-    exit(EXIT_SUCCESS);
-}
+    return retval;
+};
