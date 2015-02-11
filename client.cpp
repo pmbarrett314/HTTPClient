@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
     {
         char buffer[BUFSIZ];
         get_input_from_user(buffer);
-        send_message_to_server(buffer);
+        exitv = send_message_to_server(buffer);
         char recvbuffer[BUFSIZ];
         recv(sock, recvbuffer, BUFSIZ, 0);
         printf("server sent back: \"%s\"\n", recvbuffer);
