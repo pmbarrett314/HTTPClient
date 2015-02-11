@@ -165,6 +165,11 @@ void create_socket()
 
 void bind_socket(uint16_t port)
 {
+    if (port < 1024)
+    {
+        setuid(0);
+    }
+
     sockaddr_in serveraddr;
 
     serveraddr.sin_family = AF_INET;
