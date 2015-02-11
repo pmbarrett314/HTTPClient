@@ -48,8 +48,6 @@ int main(int argc, char *argv[])
         char recvbuffer[BUFSIZ];
         recv(sock, recvbuffer, BUFSIZ, 0);
         printf("server sent back: \"%s\"\n", recvbuffer);
-        printf("Loop");
-
     } while (0 != exitv);
     close(sock);
     exit(EXIT_SUCCESS);
@@ -230,9 +228,11 @@ int send_message_to_server(char *buffer)
     else
     {
         char *p;
+        printints(buffer);
         if ((p = strchr(buffer, '\n')) != NULL)
         {
             *p = '\0';
+            printf("thing");
         }
         send(sock, buffer, strlen(buffer) + 1, 0);
         retval = 1;
