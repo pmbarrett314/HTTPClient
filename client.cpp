@@ -228,15 +228,12 @@ int send_message_to_server(char *buffer)
     else
     {
         char *p;
-        printints(buffer);
         if ((p = strchr(buffer, '\n')) != NULL)
         {
             *p = '\0';
-            printf("thing");
         }
         send(sock, buffer, strlen(buffer) + 1, 0);
         retval = 1;
     }
-    printints(buffer);
     return retval;
 };
