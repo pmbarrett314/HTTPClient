@@ -180,7 +180,7 @@ void bind_socket(uint16_t port)
 
     serveraddr.sin_family = AF_INET;
     serveraddr.sin_port = htons(port);
-    serveraddr.sin_addr.s_addr = INADDR_ANY;
+    serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
     memset(&(serveraddr.sin_zero), 0, 8);
 
     if (-1 == bind(sock, (struct sockaddr *) &serveraddr, sizeof(serveraddr)))
