@@ -14,9 +14,9 @@ char const *args[2];
 
 void parse_arguments_and_flags(int argc, char *argv[]);
 
-uint16_t get_port_from_args();
-
 struct in_addr get_IP_from_args();
+
+uint16_t get_port_from_args();
 
 void handle_ctrl_c();
 
@@ -103,29 +103,14 @@ void parse_arguments_and_flags(int argc, char *argv[])
             args[1] = argv[i];
             isPort = true;
         }
-
     }
-
-}
-
-uint16_t get_port_from_args()
-{
-    //returns the port, which is currently args[0]
-    uint16_t port = 0;
-    char const *portstring = args[1];
-    if (0 == (port = validate_port(portstring, port)))
-    {
-        fprintf(stderr, "port not set correctly, input was: %s", portstring);
-        exit(EXIT_FAILURE);
-    }
-    return port;
 }
 
 struct in_addr get_IP_from_args()
 {
     struct in_addr IP;
 
-    int result = inet_pton(AF_INET, args[1], &IP);
+    int result = inet_pton(AF_INET, args[0], &IP);
     if (0 > result)
     {
         perror("error: first parameter is not a valid address family: %s\n");
@@ -139,7 +124,19 @@ struct in_addr get_IP_from_args()
         exit(EXIT_FAILURE);
     }
     return IP;
+}
 
+uint16_t get_port_from_args()
+{
+    //returns the port, which is currently args[0]
+    uint16_t port = 0;
+    char const *portstring = args[1];
+    if (0 == (port = validate_port(portstring, port)))
+    {
+        fprintf(stderr, "port not set correctly, input was: %s", portstring);
+        exit(EXIT_FAILURE);
+    }
+    return port;
 }
 
 void handler(int sig)
