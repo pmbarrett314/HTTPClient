@@ -167,7 +167,7 @@ void bind_socket(uint16_t port)
 {
     if (port < 1024)
     {
-        if (setuid(0) == -1)
+        if (seteuid(0) == -1)
         {
             perror("setuid failed");
         }
