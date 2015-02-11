@@ -4,6 +4,7 @@
 
 uint16_t validate_port(char const *svalue, uint16_t def)
 {
+    //convert the given port to the correct type
     errno = 0;
     char *end;
     long value = strtol(svalue, &end, 10);
@@ -37,6 +38,7 @@ uint16_t validate_port(char const *svalue, uint16_t def)
 
 void printints(char *buffer)
 {
+    //debug function
     printf("\n\n");
     for (int i = 0; i <= strlen(buffer); i++)
     {
