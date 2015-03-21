@@ -11,7 +11,7 @@
 
 int sock;
 char const *args[1];
-uint16_t port = 80;
+const char * port = "80";
 char *host;
 char *page;
 
@@ -25,6 +25,8 @@ void create_socket();
 
 void connect_to_server();
 
+void parseURL();
+
 void get_input_from_user(char *buffer);
 
 int send_message_to_server(char *buffer);
@@ -35,6 +37,7 @@ int main(int argc, char *argv[]) {
     handle_ctrl_c();
 
     printf("started with URL: %s ... \n", args[0]);
+    parseURL();
     exit(EXIT_SUCCESS);
     create_socket();
 
@@ -153,8 +156,8 @@ void connect_to_server() {
 
     memset(&serveraddr, 0, sizeof(serveraddr));
     serveraddr.sin_family = AF_INET;
-    serveraddr.sin_port = htons(port);
-    serveraddr.sin_addr = serverIP;
+    //serveraddr.sin_port = htons(port);
+    //serveraddr.sin_addr = serverIP;
 
     if (-1 == connect(sock, (struct sockaddr *) &serveraddr, sizeof(serveraddr))) {
         close(sock);
