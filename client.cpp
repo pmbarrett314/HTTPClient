@@ -12,8 +12,8 @@
 int sock;
 char const *args[1];
 const char * port = "80";
-char *host;
-char *page;
+char host[2048];
+char *page[2048];
 
 void parse_arguments_and_flags(int argc, char *argv[]);
 
