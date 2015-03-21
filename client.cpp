@@ -6,8 +6,6 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <w32api/winsock.h>
-#include <w32api/ws2tcpip.h>
 
 #include "CSE4153.h"
 
