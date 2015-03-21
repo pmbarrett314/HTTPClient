@@ -104,8 +104,8 @@ void parse_arguments_and_flags(int argc, char *argv[]) {
 
 void parseURL() {
     size_t first_slash = strcspn(args[0], "/");
-    printf("%d  ");
-    printf("%d",first_slash,strlen(args[0]));
+    printf("%d  ",first_slash);
+    printf("%d",strlen(args[0]));
     //strncpy(host, args[0],first_slash);
     //strncpy(page, &args[0][first_slash], strlen(args[0]) - first_slash);
     //printf("%s\t\t%s", host, page);
