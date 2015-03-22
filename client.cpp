@@ -25,7 +25,7 @@ void create_socket();
 
 void connect_to_server();
 
-int get_page_from_server();
+int send_request();
 
 int main(int argc, char *argv[]) {
     parse_arguments_and_flags(argc, argv);
@@ -38,18 +38,14 @@ int main(int argc, char *argv[]) {
     create_socket();
 
     connect_to_server();
-
-    int exitv = 0;
+    send_request();
+    int exitv=0;
     do {
-
-        exitv = get_page_from_server();
-        if (0 != exitv) {
-            //get return from the server and print it
-            char recvbuffer[BUFSIZ];
-            recv(sock, recvbuffer, BUFSIZ, 0);
-            printf("%s", recvbuffer);
-        }
-    } while (0 != exitv);
+        //get return from the server and print it
+        char recvbuffer[BUFSIZ];
+        exitv=recv(sock, recvbuffer, BUFSIZ, 0);
+        printf("%s", recvbuffer);
+    } while (exitv>=0);
 
     close(sock);
     exit(EXIT_SUCCESS);
@@ -157,7 +153,7 @@ void connect_to_server() {
 
 }
 
-int get_page_from_server() {
+int send_request() {
     //checks the user input to see if it should quit
     //then sends the data
     //returns 1 if should continue, 0 if should quit
