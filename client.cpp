@@ -38,7 +38,6 @@ int main(int argc, char *argv[]) {
     create_socket();
 
     connect_to_server();
-    printf("Connected...\nEnter messages, max size: %d, ctrl + d to quit, *QUIT* to kill server \n", BUFSIZ);
 
     int exitv = 0;
     do {
@@ -162,7 +161,7 @@ int get_page_from_server() {
     //checks the user input to see if it should quit
     //then sends the data
     //returns 1 if should continue, 0 if should quit
-    int retval=0;
+    int retval=1;
     char message[5012];
     snprintf(message,5012,"GET %s HTTP/1.1\\r\\n Host: %s\\r\\n \\r\\n \\r\\n",page,host);
 
