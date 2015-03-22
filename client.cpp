@@ -145,7 +145,7 @@ void connect_to_server() {
 
     if (-1 == connect(sock, servinfo->ai_addr, servinfo->ai_addrlen)) {
         close(sock);
-        fprintf(stderr, "error connect failed: %s serverIP: %s port: %d\n", strerror(errno), args[0], port);
+        fprintf(stderr, "error connect failed: %s serverIP: %s port: %s\n", strerror(errno), args[0], port);
         exit(EXIT_FAILURE);
     }
 
@@ -159,7 +159,8 @@ void send_request() {
     //returns 1 if should continue, 0 if should quit
     char message[5012];
     snprintf(message,5012,"GET %s HTTP/1.1\r\n Host: %s\r\n \r\n \r\n",page,host);
-
+    printf("\"%s\"",message);
+    sleep(10);
     send(sock,message,5012,0);
 
 };
