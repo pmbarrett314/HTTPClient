@@ -44,6 +44,7 @@ int main(int argc, char *argv[]) {
     do {
         //get return from the server and print it
         char recvbuffer[BUFSIZ];
+        memset(recvbuffer,0,BUFSIZ);
         exitv=recv(sock, recvbuffer, BUFSIZ, 0);
         printf("%s", recvbuffer);
     } while (exitv>0);
