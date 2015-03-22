@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
         char recvbuffer[BUFSIZ];
         exitv=recv(sock, recvbuffer, BUFSIZ, 0);
         printf("%s", recvbuffer);
-    } while (exitv>=0);
+    } while (exitv>0);
 
     close(sock);
     exit(EXIT_SUCCESS);
@@ -159,8 +159,6 @@ void send_request() {
     //returns 1 if should continue, 0 if should quit
     char message[5012];
     snprintf(message,5012,"GET %s HTTP/1.1\r\nHost: %s\r\n\r\n\r\n\0",page,host);
-    printf("\"%s\"",message);
-    sleep(1);
     send(sock,message,5012,0);
 
 }
