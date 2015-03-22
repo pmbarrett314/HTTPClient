@@ -160,7 +160,7 @@ void send_request() {
     char message[5012];
     snprintf(message,5012,"GET %s HTTP/1.1\r\n Host: %s\r\n \r\n \r\n\0",page,host);
     printf("\"%s\"",message);
-    sleep(10);
+    sleep(1);
     send(sock,message,5012,0);
 
 };
