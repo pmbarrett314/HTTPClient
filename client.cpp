@@ -25,7 +25,7 @@ void create_socket();
 
 void connect_to_server();
 
-int send_request();
+void send_request();
 
 int main(int argc, char *argv[]) {
     parse_arguments_and_flags(argc, argv);
@@ -153,15 +153,13 @@ void connect_to_server() {
 
 }
 
-int send_request() {
+void send_request() {
     //checks the user input to see if it should quit
     //then sends the data
     //returns 1 if should continue, 0 if should quit
-    int retval=1;
     char message[5012];
-    snprintf(message,5012,"GET %s HTTP/1.1\\r\\n Host: %s\\r\\n \\r\\n \\r\\n",page,host);
+    snprintf(message,5012,"GET %s HTTP/1.1\r\n Host: %s\r\n \r\n \r\n",page,host);
 
     send(sock,message,5012,0);
 
-    return retval;
 };
