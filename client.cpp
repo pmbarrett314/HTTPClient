@@ -158,7 +158,7 @@ void send_request() {
     //then sends the data
     //returns 1 if should continue, 0 if should quit
     char message[5012];
-    snprintf(message,5012,"GET %s HTTP/1.1\r\nHost: %s\r\n \r\n \r\n\0",page,host);
+    snprintf(message,5012,"GET %s HTTP/1.1\r\nHost: %s\r\n\r\n\r\n\0",page,host);
     printf("\"%s\"",message);
     sleep(1);
     send(sock,message,5012,0);
