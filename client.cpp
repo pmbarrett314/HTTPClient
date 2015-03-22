@@ -39,7 +39,6 @@ int main(int argc, char *argv[]) {
 
     connect_to_server();
     send_request();
-    sleep(1);
     int exitv=0;
     do {
         //get return from the server and print it
