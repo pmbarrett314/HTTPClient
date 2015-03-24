@@ -11,15 +11,15 @@
 
 int sock;
 char const *args[1];
-const char * port = "80";
+const char *PORT = "80";
 char host[2048];
 char page[2048];
+
+void handle_ctrl_c();
 
 void parse_arguments_and_flags(int argc, char *argv[]);
 
 void parseURL();
-
-void handle_ctrl_c();
 
 void create_socket();
 
@@ -27,26 +27,22 @@ void connect_to_server();
 
 void send_request();
 
+void handle_response();
+
 int main(int argc, char *argv[]) {
+    handle_ctrl_c();
+
     parse_arguments_and_flags(argc, argv);
     parseURL();
 
-    handle_ctrl_c();
-
-    printf("started with URL: %s ... \n", args[0]);
+    printf("started with host: %s, page: %s ... \n", host,page);
 
     create_socket();
 
     connect_to_server();
     send_request();
-    int exitv=0;
-    do {
-        //get return from the server and print it
-        char recvbuffer[BUFSIZ];
-        memset(recvbuffer,0,BUFSIZ);
-        exitv=recv(sock, recvbuffer, BUFSIZ, 0);
-        printf("%s", recvbuffer);
-    } while (exitv>0);
+
+    handle_response();
 
     close(sock);
     exit(EXIT_SUCCESS);
@@ -137,16 +133,14 @@ void connect_to_server() {
     hints.ai_flags= AI_PASSIVE;
 
     int status;
-    if ((status = getaddrinfo(host, port, &hints, &servinfo)) != 0) {
+    if ((status = getaddrinfo(host, PORT, &hints, &servinfo)) != 0) {
         fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
         exit(EXIT_FAILURE);
     }
 
-
-
     if (-1 == connect(sock, servinfo->ai_addr, servinfo->ai_addrlen)) {
         close(sock);
-        fprintf(stderr, "error connect failed: %s serverIP: %s port: %s\n", strerror(errno), args[0], port);
+        fprintf(stderr, "error connect failed: %s serverIP: %s port: %s\n", strerror(errno), args[0], PORT);
         exit(EXIT_FAILURE);
     }
 
@@ -155,11 +149,20 @@ void connect_to_server() {
 }
 
 void send_request() {
-    //checks the user input to see if it should quit
-    //then sends the data
-    //returns 1 if should continue, 0 if should quit
+    //sends the request to the server
     char message[5012];
     snprintf(message,5012,"GET %s HTTP/1.1\r\nHost: %s\r\n\r\n\r\n\0",page,host);
     send(sock,message,5012,0);
 
+}
+
+void handle_response()
+{
+    char recvbuffer[BUFSIZ];
+    memset(recvbuffer,0,BUFSIZ);
+    while(recv(sock, recvbuffer, BUFSIZ, 0)>0)
+    {
+        printf("%s", recvbuffer);
+        memset(recvbuffer,0,BUFSIZ);
+    }
 }
